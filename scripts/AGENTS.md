@@ -28,10 +28,10 @@
 
 ## COMMANDS
 ```bash
-/home/plate/unitree-g1-dashboard/scripts/start_g1_golden_path.sh
-/home/plate/unitree-g1-dashboard/scripts/stop_g1_golden_path.sh
-python3 /home/plate/unitree-g1-dashboard/scripts/g1_test_panel.py
-python3 /home/plate/unitree-g1-dashboard/scripts/test_balance_dds.py
+./scripts/start_g1_golden_path.sh
+./scripts/stop_g1_golden_path.sh
+python3 scripts/g1_test_panel.py
+python3 scripts/test_balance_dds.py
 ```
 
 ## NOTES

@@ -25,6 +25,6 @@ Locomotion execution layer. Prefers a TorchScript RL policy, falls back to PD ga
 
 ## COMMANDS
 ```bash
-cd /home/plate/unitree-g1-dashboard/ros2_ws/src/g1_locomotion && python3 -m pytest test/
-source /opt/ros/*/setup.bash && source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash && ros2 launch g1_locomotion locomotion.launch.py
+cd ros2_ws/src/g1_locomotion && python3 -m pytest test/
+source /opt/ros/*/setup.bash && source ros2_ws/install/setup.bash && ros2 launch g1_locomotion locomotion.launch.py
 ```

@@ -24,6 +24,6 @@ FastAPI wrapper over ROS state and mode-control services. Also launches `rosbrid
 
 ## COMMANDS
 ```bash
-source /opt/ros/*/setup.bash && source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash
+source /opt/ros/*/setup.bash && source ros2_ws/install/setup.bash
 ros2 launch g1_api api.launch.py
 ```

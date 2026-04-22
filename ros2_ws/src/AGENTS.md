@@ -36,8 +36,8 @@
 ## COMMANDS
 ```bash
 # launch full authored stack
-source /opt/ros/*/setup.bash && source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash && ros2 launch g1_bringup full_system.launch.py
+source /opt/ros/*/setup.bash && source ros2_ws/install/setup.bash && ros2 launch g1_bringup full_system.launch.py
 
 # run targeted package tests
-cd /home/plate/unitree-g1-dashboard/ros2_ws && colcon test --packages-select g1_safety g1_orchestrator g1_locomotion
+cd ros2_ws && colcon test --packages-select g1_safety g1_orchestrator g1_locomotion
 ```

@@ -25,6 +25,6 @@ Safety-monitoring domain. Converts `RobotState` into `SafetyStatus` using uprigh
 
 ## COMMANDS
 ```bash
-cd /home/plate/unitree-g1-dashboard/ros2_ws/src/g1_safety && python3 -m pytest test/
-source /opt/ros/*/setup.bash && source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash && ros2 launch g1_safety safety.launch.py
+cd ros2_ws/src/g1_safety && python3 -m pytest test/
+source /opt/ros/*/setup.bash && source ros2_ws/install/setup.bash && ros2 launch g1_safety safety.launch.py
 ```

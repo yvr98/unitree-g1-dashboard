@@ -23,6 +23,6 @@ Bridges Unitree SDK DDS topics to ROS 2 `RobotState` and `JointCommand` flows. T
 
 ## COMMANDS
 ```bash
-source /opt/ros/*/setup.bash && source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash
+source /opt/ros/*/setup.bash && source ros2_ws/install/setup.bash
 ros2 launch g1_bridge bridge.launch.py
 ```

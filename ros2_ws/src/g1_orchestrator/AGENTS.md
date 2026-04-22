@@ -25,6 +25,6 @@ High-level motion coordinator. Owns the locomotion state machine, service-driven
 
 ## COMMANDS
 ```bash
-cd /home/plate/unitree-g1-dashboard/ros2_ws/src/g1_orchestrator && python3 -m pytest test/
-source /opt/ros/*/setup.bash && source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash && ros2 launch g1_orchestrator orchestrator.launch.py
+cd ros2_ws/src/g1_orchestrator && python3 -m pytest test/
+source /opt/ros/*/setup.bash && source ros2_ws/install/setup.bash && ros2 launch g1_orchestrator orchestrator.launch.py
 ```

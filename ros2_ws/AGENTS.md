@@ -33,7 +33,7 @@ ros2_ws/
 
 ## COMMANDS
 ```bash
-cd /home/plate/unitree-g1-dashboard/ros2_ws
+cd ros2_ws
 colcon build
 colcon test
 colcon test-result --verbose

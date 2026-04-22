@@ -33,10 +33,10 @@
 
 ## COMMANDS
 ```bash
-cd /home/plate/unitree-g1-dashboard/dashboard && npm install
-cd /home/plate/unitree-g1-dashboard/dashboard && npm run dev
-cd /home/plate/unitree-g1-dashboard/dashboard && npm run build
-cd /home/plate/unitree-g1-dashboard/dashboard && npm run lint
+cd dashboard && npm install
+cd dashboard && npm run dev
+cd dashboard && npm run build
+cd dashboard && npm run lint
 ```
 
 ## NOTES

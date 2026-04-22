@@ -67,24 +67,23 @@ unitree-g1-dashboard/
 ## COMMANDS
 ```bash
 # build workspace
-cd /home/plate/unitree-g1-dashboard/ros2_ws && colcon build
+cd ros2_ws && colcon build
 
 # run dashboard locally
-cd /home/plate/unitree-g1-dashboard/dashboard && npm install && npm run dev
+cd dashboard && npm install && npm run dev
 
 # run workspace tests
-cd /home/plate/unitree-g1-dashboard/ros2_ws && colcon test && colcon test-result --verbose
+cd ros2_ws && colcon test && colcon test-result --verbose
 
 # source ROS + workspace
-source /opt/ros/*/setup.bash && source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash
+source /opt/ros/*/setup.bash && source ros2_ws/install/setup.bash
 
 # start / stop golden path
-/home/plate/unitree-g1-dashboard/scripts/start_g1_golden_path.sh
-/home/plate/unitree-g1-dashboard/scripts/stop_g1_golden_path.sh
+./scripts/start_g1_golden_path.sh
+./scripts/stop_g1_golden_path.sh
 ```
 
 ## NOTES
-- This checkout is not a git repo at the root, so branch / commit metadata is unavailable here.
-- Git is initialized locally but there is no commit history yet.
+- Commands assume you are running from the repository root unless noted otherwise.
 - Most repository file count comes from vendored robot meshes and upstream code, not first-party logic.
 - For package-level specifics, follow the nearest child `AGENTS.md`.
