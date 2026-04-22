@@ -1,182 +1,209 @@
-# unitree-g1-dashboard
+# Unitree G1 Dashboard
 
-Unitree G1 control workspace combining a ROS 2 runtime stack, a React operator dashboard, and scripted bringup around the MuJoCo simulator.
+ROS 2 control workspace for the Unitree G1 humanoid, combining:
 
-This repo is organized for local development first. The fastest path is:
+- a ROS 2 runtime stack for bridge, safety, orchestration, and locomotion
+- a React-based operator dashboard over rosbridge + HTTP
+- scripted bringup around the MuJoCo simulator
 
-1. build the ROS 2 workspace
-2. start the golden path scripts
-3. open the dashboard against the local API + rosbridge services
+This repository is structured for local development and simulation-driven bringup on Linux.
 
-## What is in this repo?
+---
 
-- `ros2_ws/` - first-party ROS 2 packages for API, bridge, safety, orchestrator, locomotion, bringup, and messages
-- `dashboard/` - React + TypeScript + Vite frontend that talks to rosbridge and the local API server
-- `scripts/` - start/stop helpers plus local test tools
-- `deps/` - vendored upstream dependencies such as Unitree MuJoCo, SDK bindings, and RL assets
-- `simulation/` - currently a placeholder, not the active simulator entrypoint
+## Overview
 
-## Architecture at a glance
+The project is organized around a small set of first-party domains:
 
-The main runtime pieces are:
+- **`g1_bridge`** — Unitree SDK / DDS bridge into ROS 2
+- **`g1_safety`** — safety checks, joint-limit monitoring, estop-related state
+- **`g1_orchestrator`** — locomotion state transitions such as idle, standing, walking, and reset
+- **`g1_locomotion`** — walking command generation with RL-first control and PD fallback
+- **`g1_api`** — HTTP API and rosbridge launch surface
+- **`dashboard/`** — browser-based operator UI for commands, telemetry, and joystick input
 
-- `g1_bridge` - DDS / Unitree SDK bridge
-- `g1_safety` - safety monitoring and estop-related checks
-- `g1_orchestrator` - standing / walking / reset state transitions
-- `g1_locomotion` - RL policy execution with PD fallback behavior
-- `g1_api` - HTTP API and rosbridge launch surface
-- `dashboard/` - browser UI for commands, telemetry, and joystick-driven `/cmd_vel`
-
-The dashboard assumes:
+The default local runtime assumes:
 
 - rosbridge on `ws://localhost:9090`
 - API on `http://localhost:8000`
 
-Those defaults currently match the golden-path startup flow.
+---
 
-## Locomotion backend: RL first, PD fallback second
-
-`g1_locomotion` prefers a packaged TorchScript policy and falls back to a built-in PD gait generator if that policy cannot be loaded.
-
-In practice:
-
-- normal walking tries to use `ros2_ws/src/g1_locomotion/policies/g1_motion.pt`
-- if the policy file is missing, `torch` is unavailable, or the policy load fails, the node stays on `pd_fallback`
-- zero command still settles into a standing-hold path rather than forcing gait output
-
-This means the full RL training stack is **not** required for normal runtime use.
-
-### What users need for intended RL walking
-
-- ROS 2 + the normal workspace dependencies
-- Python 3
-- **PyTorch** available in the Python environment used by `g1_locomotion`
-- the packaged policy artifact at `ros2_ws/src/g1_locomotion/policies/g1_motion.pt`
-- the vendored Unitree SDK path expected by the runtime
-
-### What users do not need for normal use
-
-Users do **not** need the full `unitree_rl_gym` training environment just to run the packaged walking policy.
-
-That vendored RL content is mainly relevant for:
-
-- policy regeneration or experimentation
-- deeper RL validation
-- helper scripts such as `scripts/test_balance_dds.py`
-
-### What happens without PyTorch
-
-Walking does not disappear entirely. Instead, the locomotion node falls back to the built-in PD gait path.
-
-So the behavior is:
-
-- PyTorch installed -> packaged RL walking path available
-- no PyTorch -> PD fallback only
-
-## Repository layout
+## Repository Layout
 
 ```text
 unitree-g1-dashboard/
-├── dashboard/      # React/Vite operator UI
+├── dashboard/      # React + TypeScript + Vite operator UI
 ├── ros2_ws/        # ROS 2 workspace and authored packages
-├── deps/           # vendored upstream repos and assets
-├── scripts/        # golden-path bringup / teardown / test helpers
-├── simulation/     # placeholder, not the active sim entrypoint
+├── deps/           # vendored upstream dependencies and robot assets
+├── scripts/        # startup, shutdown, and local test helpers
+├── simulation/     # placeholder; not the active simulator entrypoint
 ├── README.md
 └── pyrightconfig.json
 ```
 
+### First-party code
+
+The primary authored code lives in:
+
+- `ros2_ws/src/`
+- `dashboard/`
+- `scripts/`
+
+### Vendored code
+
+`deps/` contains upstream content such as Unitree MuJoCo assets, SDK bindings, and RL-related assets. It is tracked in this repository for reproducible local setup, but it should be treated as vendored input rather than the default place for first-party feature work.
+
+---
+
 ## Prerequisites
 
-This project is currently aimed at Linux development with a local ROS 2 installation.
+This repository currently targets **Linux-based local development**.
 
-You should expect to have:
+You should have:
 
 - ROS 2 installed under `/opt/ros/...`
 - Python 3 available as `python3`
-- Node.js + npm for the dashboard
-- a working colcon build environment
-- the vendored simulator dependencies present under `deps/`
+- Node.js and npm for the dashboard
+- `colcon` available for building the ROS 2 workspace
 
-Because the stack includes ROS 2, MuJoCo, rosbridge, and vendored Unitree dependencies, this repo is **not** yet a one-command portable environment for every machine. Documented local setup is the intended path right now.
+You should also expect that this project depends on local simulator / graphics / ROS networking assumptions. It is not yet packaged as a fully portable, host-agnostic environment.
 
-## Quick start
+---
+
+## Quick Start
 
 ### 1. Build the ROS 2 workspace
 
+From the repository root:
+
 ```bash
-cd /home/plate/unitree-g1-dashboard/ros2_ws
+cd ros2_ws
 colcon build
 ```
 
 ### 2. Start the golden path
 
-This launches MuJoCo first, then ROS bringup, then waits for:
-
-- rosbridge on port `9090`
-- API on port `8000`
-- ROS service `/set_locomotion_mode`
+From the repository root:
 
 ```bash
-/home/plate/unitree-g1-dashboard/scripts/start_g1_golden_path.sh
+./scripts/start_g1_golden_path.sh
 ```
 
-Logs and runtime state land under:
+The startup script:
+
+- launches MuJoCo first
+- launches the full ROS stack
+- waits for:
+  - rosbridge on port `9090`
+  - API on port `8000`
+  - `/set_locomotion_mode` service availability
+
+Runtime artifacts are written under:
 
 - `scripts/logs/`
 - `scripts/.run/`
 
 ### 3. Run the dashboard
 
-In a separate shell:
+In a separate shell, from the repository root:
 
 ```bash
-cd /home/plate/unitree-g1-dashboard/dashboard
+cd dashboard
 npm install
 npm run dev
 ```
 
-Then open the local Vite URL in your browser.
+Then open the Vite development URL shown in the terminal.
 
 ### 4. Stop the stack
 
+From the repository root:
+
 ```bash
-/home/plate/unitree-g1-dashboard/scripts/stop_g1_golden_path.sh
+./scripts/stop_g1_golden_path.sh
 ```
 
-## Common development commands
+---
+
+## Locomotion Backend
+
+`g1_locomotion` uses a **hybrid backend**:
+
+- **preferred path:** packaged TorchScript RL policy
+- **fallback path:** built-in PD gait generation
+
+By default, runtime walking tries to load:
+
+- `ros2_ws/src/g1_locomotion/policies/g1_motion.pt`
+
+If the policy file is missing, `torch` is unavailable, or the policy fails to load, the node stays on the PD fallback path.
+
+### For intended RL walking
+
+Users should have:
+
+- the normal ROS 2 workspace dependencies
+- Python 3
+- **PyTorch** available in the Python environment used by `g1_locomotion`
+- the packaged policy artifact `g1_motion.pt`
+
+### What is not required for normal runtime use
+
+Users do **not** need the full training stack just to run the packaged walking policy.
+
+The vendored RL-related content in `deps/unitree_rl_gym` is mainly relevant for:
+
+- policy regeneration or experimentation
+- deeper RL validation
+- helper scripts such as `scripts/test_balance_dds.py`
+
+### Behavior without PyTorch
+
+If PyTorch is unavailable, locomotion does not disappear entirely. The system falls back to the built-in PD gait path.
+
+---
+
+## Common Development Commands
 
 ### ROS 2 workspace
 
+From the repository root:
+
 ```bash
-cd /home/plate/unitree-g1-dashboard/ros2_ws
+cd ros2_ws
 colcon build
 colcon test
 colcon test-result --verbose
 ```
 
-### Source ROS + workspace
+### Source ROS + workspace overlay
+
+From the repository root:
 
 ```bash
 source /opt/ros/*/setup.bash
-source /home/plate/unitree-g1-dashboard/ros2_ws/install/setup.bash
+source ros2_ws/install/setup.bash
 ```
 
 ### Dashboard
 
+From the repository root:
+
 ```bash
-cd /home/plate/unitree-g1-dashboard/dashboard
+cd dashboard
 npm install
 npm run dev
 npm run build
 npm run lint
 ```
 
+---
+
 ## Testing
 
-Automated tests currently live mostly in package-level `test/` directories under `ros2_ws/src/`.
+Automated tests currently live primarily in package-level `test/` directories under `ros2_ws/src/`.
 
-Examples:
+Representative examples:
 
 - `ros2_ws/src/g1_safety/test/test_joint_limits.py`
 - `ros2_ws/src/g1_orchestrator/test/test_orchestrator_helpers.py`
@@ -184,26 +211,30 @@ Examples:
 - `ros2_ws/src/g1_locomotion/test/test_rl_live.py`
 - `ros2_ws/src/g1_locomotion/test/test_locomotion_command_selection.py`
 
-Package-level test runs are typically done with `pytest`, while workspace-level runs use `colcon test`.
+Package-local tests are generally run with `pytest`, while workspace-wide runs use `colcon test`.
 
-There are also manual / operational helpers in `scripts/`, especially:
+The repository also includes operational/manual helpers under `scripts/`, including:
 
-- `scripts/g1_test_panel.py` - small local operator panel on `127.0.0.1:8765`
-- `scripts/test_balance_dds.py` - lower-level DDS / balance harness
+- `scripts/g1_test_panel.py` — lightweight local operator panel on `127.0.0.1:8765`
+- `scripts/test_balance_dds.py` — lower-level DDS / locomotion harness
 
-## Notes about `deps/`
+---
 
-`deps/` contains vendored upstream code and assets. It is part of the working tree, but it is **not** the best place to make casual first-party edits.
+## Notes on Vendored Dependencies
 
-In general:
+`deps/` is intentionally tracked in this repository because the simulator and runtime stack depend on upstream assets and SDK content.
 
-- treat `deps/` as vendored input
+In practice:
+
+- treat `deps/` as vendored content
 - make first-party behavior changes in `ros2_ws/src/`, `dashboard/`, or `scripts/`
 - only patch vendored code deliberately and document that decision
 
-## What not to edit directly
+---
 
-Generated outputs should not be treated as source:
+## Generated Output Directories
+
+The following should be treated as generated artifacts rather than source:
 
 - `ros2_ws/build/`
 - `ros2_ws/install/`
@@ -213,25 +244,24 @@ Generated outputs should not be treated as source:
 - `scripts/.run/`
 - `scripts/logs/`
 
-## Current limitations
+---
 
-- `simulation/` is still a placeholder; active simulator flow currently lives under `deps/unitree_mujoco` and the golden-path scripts
-- the dashboard still relies on hard-coded local endpoints for rosbridge and the API
-- the root environment is documented for local Linux use, not yet fully containerized for every host setup
-- dashboard testing is still mostly manual; there is no dedicated frontend test suite yet
+## Current Status / Limitations
 
-## Suggested first places to read
+- `simulation/` is still a placeholder; active simulation flow currently lives under `deps/unitree_mujoco` and the startup scripts
+- the dashboard still uses local default endpoints for rosbridge and the API
+- the project is documented for local Linux use, not as a fully containerized environment for every host setup
+- dashboard testing is still primarily manual; there is no dedicated frontend test suite yet
 
-- root project guidance: `AGENTS.md`
-- dashboard-specific guidance: `dashboard/AGENTS.md`
-- scripts / operator workflow guidance: `scripts/AGENTS.md`
-- ROS workspace guidance: `ros2_ws/AGENTS.md`
+---
 
-## Publishing notes
+## Additional Documentation
 
-If you plan to publish this repo for others to clone:
+For contributor- and subsystem-specific guidance, see:
 
-- prefer clear setup docs over forcing Docker immediately
-- document the supported host environment explicitly
-- keep the quick-start path centered on `colcon build`, `start_g1_golden_path.sh`, and `npm run dev`
-- decide intentionally whether vendored `deps/` content belongs in the public history as-is
+- `AGENTS.md`
+- `dashboard/AGENTS.md`
+- `scripts/AGENTS.md`
+- `ros2_ws/AGENTS.md`
+
+These files are intended for deeper project navigation and implementation details. The README is the public-facing starting point.
