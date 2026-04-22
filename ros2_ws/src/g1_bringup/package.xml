@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>g1_bringup</name>
+  <version>0.0.0</version>
+  <description>Combined bringup launch files for the Unitree G1 ROS 2 stack.</description>
+  <maintainer email="plate@example.com">plate</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>ament_index_python</depend>
+  <depend>g1_bridge</depend>
+  <depend>g1_safety</depend>
+  <depend>g1_orchestrator</depend>
+  <depend>g1_locomotion</depend>
+  <depend>g1_api</depend>
+
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

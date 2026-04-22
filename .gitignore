@@ -1,0 +1,41 @@
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python caches and tooling
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+
+# Local virtual environments
+.venv/
+venv/
+env/
+
+# ROS 2 generated workspace outputs
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# Frontend generated artifacts
+dashboard/node_modules/
+dashboard/dist/
+dashboard/dist-ssr/
+
+# Runtime logs and temp files
+*.log
+logs/
+tmp/
+*.tmp
+
+# Environment/local config
+.env
+.env.*
+*.local

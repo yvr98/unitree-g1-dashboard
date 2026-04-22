@@ -1,0 +1,16 @@
+/g1_api_node:
+  ros__parameters:
+    robot_state_topic: /robot_state
+    safety_status_topic: /safety_status
+    locomotion_state_topic: /locomotion_state
+    set_mode_service: /set_locomotion_mode
+    api_host: 0.0.0.0
+    api_port: 8000
+    command_timeout_sec: 5.0
+    cors_allowed_origins:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+    command_list:
+      - stand_up
+      - sit_down
+      - reset

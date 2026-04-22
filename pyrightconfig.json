@@ -1,0 +1,7 @@
+{
+  "extraPaths": [
+    "ros2_ws/src/g1_bridge",
+    "ros2_ws/src/g1_safety",
+    "ros2_ws/src/g1_orchestrator"
+  ]
+}

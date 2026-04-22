@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>g1_api</name>
+  <version>0.0.0</version>
+  <description>FastAPI wrapper and rosbridge launch integration for the Unitree G1 dashboard.</description>
+  <maintainer email="plate@example.com">plate</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>ament_index_python</depend>
+  <depend>g1_msgs</depend>
+  <depend>rclpy</depend>
+  <depend>std_srvs</depend>
+
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>python3-fastapi</exec_depend>
+  <exec_depend>python3-uvicorn</exec_depend>
+  <exec_depend>rosbridge_server</exec_depend>
+
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

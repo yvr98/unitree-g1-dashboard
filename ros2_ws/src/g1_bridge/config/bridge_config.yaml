@@ -1,0 +1,14 @@
+/**:
+  ros__parameters:
+    mode: sim
+    sim_domain_id: 1
+    sim_interface: lo
+    real_domain_id: 0
+    real_interface: eth0
+    state_topic: /robot_state
+    command_topic: /joint_commands
+    joint_count: 29
+    control_rate_hz: 500.0
+    command_timeout_sec: 0.1
+    state_timeout_sec: 1.0
+    frame_id: base
